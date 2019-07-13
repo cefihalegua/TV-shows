@@ -67,10 +67,21 @@ def search():
 
 @route("/search", method="POST")
 def search():
-    user_input=request.forms.get("q")
-    requested_show=json.loads(utils.getJsonFromFile(user_input))
+    user_input=request.POST.get("q")
+    results=[]
+    for show in utils.AVAILABE_SHOWS:
+        each_show=json.loads(utils.getJsonFromFile(show))
+        episodes = each_show["_embedded"]["episodes"]
+        for each_episode in episodes:
+            if user_input.lower() in each_episode["name"] or user_input.lower() in str(each_episode["summary"]):
+                result={
+                    'showid': each_show["id"],
+                    'episodeid': each_episode["id"],
+                    'text': "%s : %s" % (each_show["name"], each_episode["name"])}
+
+                results.append(result)
     search_template = "./templates/search_result.tpl"
-    return template("./pages/index.html", version=utils.getVersion(), sectionTemplate=search_template, sectionData = requested_show, query=user_input, results=requested_show)
+    return template("./pages/index.html", version=utils.getVersion(), sectionTemplate=search_template, sectionData = {}, query=user_input, results=results)
 
 
 
