@@ -65,6 +65,14 @@ def search():
     search_template = "./templates/search.tpl"
     return template("./pages/index.html", version=utils.getVersion(), sectionTemplate=search_template, sectionData = {})
 
+@route("/search", method="POST")
+def search():
+    user_input=request.forms.get("q")
+    requested_show=json.loads(utils.getJsonFromFile(user_input))
+    search_template = "./templates/search_result.tpl"
+    return template("./pages/index.html", version=utils.getVersion(), sectionTemplate=search_template, sectionData = requested_show, query=user_input, results=requested_show)
+
+
 
 @error(404)
 def error(error):
@@ -72,4 +80,4 @@ def error(error):
     return template("./pages/index.html", version=utils.getVersion(), sectionTemplate=error_template, sectionData={})
 
 
-run(host='0.0.0.0', port=os.environ.get('PORT', 5000))
+run(host='localhost', port=os.environ.get('PORT', 5000))
