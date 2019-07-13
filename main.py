@@ -39,8 +39,7 @@ def browse():
 @route("/ajax/show/<number>")
 def show_ajax(number):
     selected_show = json.loads(utils.getJsonFromFile(number))
-    show_template = "./templates/show.tpl"
-    return template("./pages/index.html", version=utils.getVersion(), sectionTemplate=show_template, sectionData=selected_show)
+    return template("./templates/show.tpl", result=selected_show)
 
 
 @route("/show/<number>")
@@ -51,6 +50,15 @@ def show(number):
 
 
 @route("/ajax/show/<shownumber>/episode/<episodenumber>")
+def episode(shownumber, episodenumber):
+    selected_show = json.loads(utils.getJsonFromFile(shownumber))
+    episodes = selected_show["_embedded"]["episodes"]
+    for episode in episodes:
+        if episode["id"] == int(episodenumber):
+            return template("./templates/episode.tpl", result=episode)
+
+
+@route("/show/<shownumber>/episode/<episodenumber>")
 def episode(shownumber, episodenumber):
     selected_show = json.loads(utils.getJsonFromFile(shownumber))
     episodes = selected_show["_embedded"]["episodes"]
