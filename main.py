@@ -73,6 +73,25 @@ def search():
     search_template = "./templates/search.tpl"
     return template("./pages/index.html", version=utils.getVersion(), sectionTemplate=search_template, sectionData = {})
 
+@route("/search", method="POST")
+def search():
+    user_input=request.POST.get("q")
+    results=[]
+    for show in utils.AVAILABE_SHOWS:
+        each_show=json.loads(utils.getJsonFromFile(show))
+        episodes = each_show["_embedded"]["episodes"]
+        for each_episode in episodes:
+            if user_input.lower() in each_episode["name"] or user_input.lower() in str(each_episode["summary"]):
+                result={
+                    'showid': each_show["id"],
+                    'episodeid': each_episode["id"],
+                    'text': "%s : %s" % (each_show["name"], each_episode["name"])}
+
+                results.append(result)
+    search_template = "./templates/search_result.tpl"
+    return template("./pages/index.html", version=utils.getVersion(), sectionTemplate=search_template, sectionData = {}, query=user_input, results=results)
+
+
 
 @error(404)
 def error(error):
@@ -80,4 +99,4 @@ def error(error):
     return template("./pages/index.html", version=utils.getVersion(), sectionTemplate=error_template, sectionData={})
 
 
-run(host='0.0.0.0', port=os.environ.get('PORT', 5000))
+run(host='localhost', port=os.environ.get('PORT', 5000))
