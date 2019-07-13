@@ -81,7 +81,7 @@ def search():
         each_show=json.loads(utils.getJsonFromFile(show))
         episodes = each_show["_embedded"]["episodes"]
         for each_episode in episodes:
-            if user_input.lower() in each_episode["name"] or user_input.lower() in str(each_episode["summary"]):
+            if user_input.lower() in each_episode["name"].lower() or user_input.lower() in str(each_episode["summary"]).lower():
                 result={
                     'showid': each_show["id"],
                     'episodeid': each_episode["id"],
